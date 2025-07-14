@@ -20,7 +20,7 @@ OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(BINDIR)/%.o, $(SOURCES)) main.cpp
 CXXFLAGS = -I$(INCDIR)
 
 # Define the linker flags
-LDFLAGS = -L$(LIBDIR) -lraylib
+LDFLAGS = -L$(LIBDIR) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 # Default rule to build the target
 all: $(TARGET)
@@ -40,11 +40,19 @@ $(BINDIR)/%.o: $(SRCDIR)/%.cpp
 clean:
 	rm -rf $(BINDIR)/*.o $(TARGET)
 
-# Print variables for debugging
+# Debug variables
 debug:
 	@echo "Sources: $(SOURCES)"
 	@echo "Objects: $(OBJECTS)"
 	@echo "Target: $(TARGET)"
 
+# Run the program
+run: all
+	./$(TARGET)
+
+# Clean, then build and run
+run-clean: clean all
+	./$(TARGET)
+
 # Phony targets
-.PHONY: all clean debug
+.PHONY: all clean debug run run-clean

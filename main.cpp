@@ -1,6 +1,5 @@
 #include "./include/raylib.h"
 
-
 void DrawCustomGrid(int slices, float spacing, Color color)
 {
   float half = (slices * spacing) / 2.0f;
@@ -70,47 +69,59 @@ static Mesh GenMeshCustom(void) {
     return mesh;
 }
 
+
 int main(void)
 {
-  const int screenWidth = 1000;
-  const int screenHeight = 650;
+    const int screenWidth = 1000;
+    const int screenHeight = 650;
 
-  InitWindow(screenWidth, screenHeight, "Fuselarge thing");
+    InitWindow(screenWidth, screenHeight, "Fuselarge thing");
 
-  Camera3D camera = { 0 };
-  camera.position = (Vector3){ 10.0f, 10.0f, 10.0f };
-  camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-  camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-  camera.fovy = 50.0f;
-  camera.projection = CAMERA_PERSPECTIVE;
+    Camera3D camera = { 0 };
+    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f };
+    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    camera.fovy = 50.0f;
+    camera.projection = CAMERA_PERSPECTIVE;
 
-  Vector3 position = (Vector3){0, 3, 0};
+    Vector3 position = (Vector3){0, 2.5, 0};
 
-  Model mesh = LoadModelFromMesh(GenMeshCustom());
+    Model mesh = LoadModelFromMesh(GenMeshCustom());
 
-  SetTargetFPS(60);
+    // Gruvbox colors
+    Color gruvbox_bg = (Color){29, 32, 33, 255};         // bg0
+    Color gruvbox_fg = (Color){235, 219, 178, 255};      // fg
+    Color gruvbox_grid = (Color){184, 187, 38, 255};     // yellow-greenish
+    Color gruvbox_model = (Color){251, 73, 52, 255};     // red
+    Color gruvbox_wire = (Color){131, 165, 152, 255};    // blueish
 
-  while (!WindowShouldClose())
-  {
-    BeginDrawing();
-    ClearBackground(LIGHTGRAY);
+    SetTargetFPS(60);
 
-    BeginMode3D(camera);
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+        ClearBackground(gruvbox_bg);
 
-    UpdateCamera(&camera, CAMERA_ORBITAL);
+        BeginMode3D(camera);
 
-    // DrawCube(position, 5, 5, 5, BLUE);
-    DrawModel(mesh, position, 1.0f, RED);
-    DrawCubeWires(position, 5, 5, 5, BLACK);
+        UpdateCamera(&camera, CAMERA_ORBITAL);
 
-    DrawGrid(10, 1.0);
-    DrawCustomGrid(10, 1.0, WHITE); 
+        // DrawCube(position, 5, 5, 5, gruvbox_wire);
+        // DrawCubeWires(position, 5, 5, 5, gruvbox_bg);
 
-    EndMode3D();
+        DrawSphereWires(position, 20, 10, 10, gruvbox_fg);
+        DrawSphereWires(position, 15, 10, 10, RED);
+        DrawSphere(position, 10, gruvbox_wire);
 
-    EndDrawing();
-  }
 
-  CloseWindow();
-  return 0;
+        DrawGrid(10, 1.0f);  // Optional: built-in grid
+        DrawCustomGrid(10, 1.0f, gruvbox_grid);  // Gruvbox custom grid
+
+        EndMode3D();
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
 }
